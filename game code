@@ -1,0 +1,155 @@
+#include <Adafruit_CircuitPlayground.h>
+#include <AsyncDelay.h>
+
+
+const byte leftPin = 4;
+const byte rightPin = 5;
+const byte switchPin = 7;
+
+bool leftFlag = 0;
+bool rightFlag = 0;
+bool switchFlag = 0;
+bool switchFlag2 = 0;
+
+bool switchState;
+
+int level = 0;
+int score = 0;
+int check = 1;
+int gamePattern[100] = {};
+int playerPattern[100] = {};
+
+int randNumber;
+
+
+void setup() {
+  Serial.begin(9600);
+  CircuitPlayground.begin();
+  delay(50);
+  randomSeed(CircuitPlayground.lightSensor());
+  attachInterrupt(digitalPinToInterrupt(leftPin), leftPress, RISING);
+  attachInterrupt(digitalPinToInterrupt(rightPin), rightPress, RISING);
+  attachInterrupt(digitalPinToInterrupt(switchPin), switchFlick, CHANGE);
+  switchState = CircuitPlayground.slideSwitch();
+}
+
+void leftPress() {
+  leftFlag = true;
+}
+
+void rightPress() {
+  rightFlag = true;
+}
+
+void switchFlick() {
+  switchFlag = true;
+  switchFlag2 = true;
+}
+
+void startLevel() { // This plays the level to remember. // add a break for reset
+  gamePattern[level] = random(2);
+  delay(300);
+  for(int i = 0; i <= level; i++) {
+    Serial.println(gamePattern[i]);
+    if (gamePattern[i] == 1){
+      for (int r = 5; r < 10; r++) {
+        CircuitPlayground.setPixelColor(r, 128,0,128);
+      }
+      delay(300);
+      CircuitPlayground.clearPixels();
+    } else {
+      for (int l = 0; l <5; l++){
+        CircuitPlayground.setPixelColor(l, 0,0,255);
+      }
+      delay(300);
+      CircuitPlayground.clearPixels();
+    }
+    delay(100);
+  }
+  
+}
+
+void recPlayer() {
+  rightFlag = 0;
+  leftFlag = 0;
+  for(int i = 0; i <= level; i++) {   // add a break for reset
+    while(!rightFlag&&!leftFlag) {
+      delay(10);
+    }
+    if (rightFlag){
+      for (int r = 5; r < 10; r++) {
+        CircuitPlayground.setPixelColor(r, 128,0,128);
+      }
+      while(CircuitPlayground.rightButton()) {
+        delay(10);
+      }
+      CircuitPlayground.clearPixels();
+      playerPattern[i] = 1; //record to array
+      rightFlag=0;
+      Serial.println("right");
+    } else {
+      for (int l = 0; l <5; l++){
+        CircuitPlayground.setPixelColor(l, 0,0,255);
+      }
+      while(CircuitPlayground.leftButton()) {
+        delay(10);
+      }
+      CircuitPlayground.clearPixels();
+      playerPattern[i] = 0; //record to array
+      leftFlag=0;
+      Serial.println("left");
+    }
+
+    if (gamePattern[i] != playerPattern[i]){
+      break;
+    } else {
+      check = i;
+    }
+    
+  }
+
+  if (check==level) {
+    Serial.println("CORRECT!");
+    score = ((level+1) * (10));
+    level++;
+  } else {
+    Serial.println("WRONG!");
+    level = 0;
+    check = 1;
+    Serial.print("Final Score:  ");
+    Serial.println(score);
+    
+  }
+  
+}
+
+
+
+
+void loop() {
+  delay(100);
+
+  
+
+  while(!switchFlag){
+    delay(10);
+  }
+  
+  startLevel();
+
+  recPlayer();
+  
+
+
+  
+  
+  Serial.println("end------------------");
+  
+  
+
+
+
+}
+
+
+
