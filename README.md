@@ -7,14 +7,14 @@ The game is a memory game based on a random pattern. The device will generate a 
 
 The player has to remember the order of the displayed pattern and enter in a matching pattern using the buttons. If they are correct, the game will confirm their success with a short melody and a green light pattern. If they enter any part wrong, or take too long, the game will tell them with a different sound and display of red lights. 
 
-It will automatically restart after a failure. It can also be restarted at any time by using the switch (not pause anymore because it doesn’t make sense with this game). The player’s score will be displayed on the serial monitor at the end of the game and will be equal to the number of levels passed.
+It will automatically restart after a failure, or if the game is turned off. The switch toggles the game on and off (no pause because it doesn’t make sense with this game). The player’s score will be displayed on the serial monitor at the end of the game and will increase with the number of levels passed.
 
 ## Inputs and Outputs
 
 Left and right buttons: Will be used by the player to enter the pattern in a certain order.
 
-Switch: Will be used to start/restart the game.
+Switch: Will be used to turn the game on/off. (start/restart)
 
 LEDs: Will be used to play the random pattern for each level, confirming inputs from the player, and playing a pattern when the game ends due to a failure.
 
-Speaker: This will be used to indicate the end of each pattern being played/entered. It will also tell the player if they got the answer correct or incorrect.
+Speaker: This will be used with the LEDs to indicate each part of the pattern and which button is pressed. It will also tell the player if they got the answer correct or incorrect.
